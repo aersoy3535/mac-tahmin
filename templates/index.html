@@ -1,0 +1,255 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Maç Tahminleri</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #F7F6F1;
+    --panel: #FFFFFF;
+    --ink: #14231C;
+    --muted: #5C6B62;
+    --pitch: #0B3D2E;
+    --pitch-light: #145C43;
+    --amber: #E8A33D;
+    --home: #1E7F4F;
+    --draw: #B9B2A0;
+    --away: #B4472B;
+    --line: #E4E1D6;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font-family: 'Inter', -apple-system, sans-serif;
+    padding-bottom: 3rem;
+  }
+  h1, h2, .team-name, .score-badge {
+    font-family: 'Oswald', 'Inter', sans-serif;
+  }
+  header.top {
+    background: var(--pitch);
+    color: #F7F6F1;
+    padding: 1.4rem 1.2rem 1.6rem;
+  }
+  header.top h1 {
+    margin: 0 0 0.3rem;
+    font-size: 1.5rem;
+    font-weight: 600;
+    letter-spacing: 0.01em;
+  }
+  header.top p {
+    margin: 0;
+    color: #C7D6CC;
+    font-size: 0.88rem;
+  }
+  .meta-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 1rem;
+    flex-wrap: wrap;
+    margin-top: 0.9rem;
+  }
+  form.refresh-form button {
+    background: var(--amber);
+    color: #23180A;
+    border: none;
+    border-radius: 6px;
+    padding: 0.5rem 0.9rem;
+    font-weight: 600;
+    font-size: 0.85rem;
+    cursor: pointer;
+  }
+  form.refresh-form button:active { transform: translateY(1px); }
+
+  main {
+    max-width: 720px;
+    margin: 0 auto;
+    padding: 1.1rem 1rem 0;
+  }
+
+  details.league {
+    background: var(--panel);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    margin-bottom: 0.8rem;
+    overflow: hidden;
+  }
+  details.league[open] { border-color: var(--pitch-light); }
+  summary.league-header {
+    list-style: none;
+    cursor: pointer;
+    padding: 0.85rem 1rem;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-family: 'Oswald', sans-serif;
+    font-weight: 600;
+    font-size: 1.02rem;
+    color: var(--pitch);
+  }
+  summary.league-header::-webkit-details-marker { display: none; }
+  summary.league-header .count {
+    font-family: 'Inter', sans-serif;
+    font-weight: 500;
+    font-size: 0.78rem;
+    color: var(--muted);
+    background: var(--bg);
+    border-radius: 999px;
+    padding: 0.15rem 0.6rem;
+  }
+
+  .match {
+    padding: 0.85rem 1rem;
+    border-top: 1px solid var(--line);
+  }
+  .match-teams {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 0.6rem;
+    margin-bottom: 0.35rem;
+  }
+  .team-name { font-size: 0.98rem; font-weight: 500; }
+  .vs { color: var(--muted); font-size: 0.8rem; padding: 0 0.3rem; }
+  .match-date {
+    font-size: 0.74rem;
+    color: var(--muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .prob-bar {
+    display: flex;
+    height: 22px;
+    border-radius: 5px;
+    overflow: hidden;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: #fff;
+    margin-bottom: 0.4rem;
+  }
+  .prob-bar span {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    white-space: nowrap;
+    overflow: hidden;
+  }
+  .seg-home { background: var(--home); }
+  .seg-draw { background: var(--draw); color: #4A4636; }
+  .seg-away { background: var(--away); }
+
+  .match-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.78rem;
+    color: var(--muted);
+  }
+  .score-badge {
+    background: var(--pitch);
+    color: #fff;
+    font-weight: 600;
+    font-size: 0.78rem;
+    border-radius: 5px;
+    padding: 0.15rem 0.5rem;
+  }
+  .no-data {
+    padding: 0.85rem 1rem;
+    border-top: 1px solid var(--line);
+    font-size: 0.85rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+  footer.disclaimer {
+    max-width: 720px;
+    margin: 1.2rem auto 0;
+    padding: 0 1rem;
+    font-size: 0.76rem;
+    color: var(--muted);
+    line-height: 1.5;
+  }
+</style>
+</head>
+<body>
+
+<header class="top">
+  <h1>Maç Tahminleri</h1>
+  <p>{{ total_matches }} maç &middot; {{ leagues|length }} lig &middot; istatistiksel tahmin (Poisson modeli)</p>
+  <div class="meta-row">
+    <span style="font-size:0.8rem; color:#C7D6CC;">
+      Son güncelleme: {{ age_minutes }} dakika önce
+    </span>
+    <form class="refresh-form" method="post" action="{{ url_for('refresh_now') }}">
+      <button type="submit">Şimdi Yenile</button>
+    </form>
+  </div>
+</header>
+
+<main>
+  {% for league_name, matches in leagues.items() %}
+  <details class="league" {% if loop.first %}open{% endif %}>
+    <summary class="league-header">
+      <span>{{ league_name }}</span>
+      <span class="count">{{ matches|length }} maç</span>
+    </summary>
+
+    {% for m in matches %}
+      {% if m.prediction %}
+      <div class="match">
+        <div class="match-teams">
+          <span class="team-name">{{ m.home }}</span>
+          <span class="vs">vs</span>
+          <span class="team-name">{{ m.away }}</span>
+        </div>
+        <div class="match-date">{{ m.date[:10] }}</div>
+        <div class="prob-bar">
+          <span class="seg-home" style="width: {{ m.prediction.home_win_pct }}%;">
+            {% if m.prediction.home_win_pct >= 12 %}%{{ m.prediction.home_win_pct }}{% endif %}
+          </span>
+          <span class="seg-draw" style="width: {{ m.prediction.draw_pct }}%;">
+            {% if m.prediction.draw_pct >= 12 %}%{{ m.prediction.draw_pct }}{% endif %}
+          </span>
+          <span class="seg-away" style="width: {{ m.prediction.away_win_pct }}%;">
+            {% if m.prediction.away_win_pct >= 12 %}%{{ m.prediction.away_win_pct }}{% endif %}
+          </span>
+        </div>
+        <div class="match-footer">
+          <span>xG: {{ m.prediction.home_expected_goals }} - {{ m.prediction.away_expected_goals }}</span>
+          <span class="score-badge">{{ m.prediction.most_likely_score }} (%{{ m.prediction.most_likely_score_pct }})</span>
+        </div>
+      </div>
+      {% else %}
+      <div class="match">
+        <div class="match-teams">
+          <span class="team-name">{{ m.home }}</span>
+          <span class="vs">vs</span>
+          <span class="team-name">{{ m.away }}</span>
+        </div>
+        <div class="match-date">{{ m.date[:10] }}</div>
+      </div>
+      <div class="no-data">{{ m.note }}</div>
+      {% endif %}
+    {% endfor %}
+  </details>
+  {% else %}
+  <p style="text-align:center; color: var(--muted); margin-top: 2rem;">
+    Şu anda yaklaşan maç bulunamadı. "Şimdi Yenile" ile tekrar dene.
+  </p>
+  {% endfor %}
+</main>
+
+<footer class="disclaimer">
+  Bu tahminler son maçlardaki form ve gol ortalamalarına dayalı istatistiksel bir
+  modelden (Poisson dağılımı) üretilir. Hiçbir sonucu garanti etmez; futbol
+  doğası gereği öngörülemezdir. Sadece bilgi amaçlıdır.
+</footer>
+
+</body>
+</html>
