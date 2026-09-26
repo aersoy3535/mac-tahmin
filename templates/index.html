@@ -4,6 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Maç Tahminleri</title>
+{% if refreshing %}<meta http-equiv="refresh" content="20">{% endif %}
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
@@ -160,6 +161,13 @@
     border-radius: 5px;
     padding: 0.15rem 0.5rem;
   }
+  .refreshing-banner {
+    background: #FCEFD2;
+    color: #6B4E12;
+    font-size: 0.78rem;
+    text-align: center;
+    padding: 0.45rem 1rem;
+  }
   .no-data {
     padding: 0.85rem 1rem;
     border-top: 1px solid var(--line);
@@ -191,6 +199,10 @@
     </form>
   </div>
 </header>
+
+{% if refreshing %}
+<div class="refreshing-banner">Arka planda güncelleniyor — birkaç dakika içinde tazelenmiş olabilir.</div>
+{% endif %}
 
 <main>
   {% for league_name, matches in leagues.items() %}

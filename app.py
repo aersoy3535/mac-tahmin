@@ -1,9 +1,9 @@
 """
 Maç Tahmin Web Uygulaması.
 
-Sayfa açıldığında önbellekteki (veya gerekirse tazelenmiş) tahminleri
-liglere göre gruplanmış şekilde gösterir. "Şimdi Yenile" butonu önbelleği
-zorla tazeler (bu ~2-3 dakika sürebilir, çünkü 12 lig taranıyor).
+Sayfa hiçbir zaman dakikalarca beklemez: veri hazırsa gösterir, değilse
+(veya eskiyse) arka planda taramayı tetikler ve "hazırlanıyor" sayfası
+gösterir (bu sayfa kendini birkaç saniyede bir otomatik yeniler).
 """
 import time
 
@@ -16,10 +16,11 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    try:
-        data = cache.get_or_refresh()
-    except Exception as e:
-        return render_template("error.html", message=str(e)), 500
+    data, stale, refreshing = cache.get_status()
+
+    if data is None:
+        return render_template("loading.html", error=cache.get_last_error())
+
     age_minutes = int((time.time() - data["generated_at"]) / 60)
     total_matches = sum(len(v) for v in data["leagues"].values())
     return render_template(
@@ -27,15 +28,13 @@ def index():
         leagues=data["leagues"],
         age_minutes=age_minutes,
         total_matches=total_matches,
+        refreshing=refreshing,
     )
 
 
 @app.route("/yenile", methods=["POST"])
 def refresh_now():
-    try:
-        cache.get_or_refresh(force=True)
-    except Exception as e:
-        return render_template("error.html", message=str(e)), 500
+    cache.trigger_background_refresh()
     return redirect(url_for("index"))
 
 

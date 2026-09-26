@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="refresh" content="6">
+<title>Tahminler hazırlanıyor...</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@500;600&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  body {
+    margin: 0;
+    background: #F7F6F1;
+    color: #14231C;
+    font-family: 'Inter', -apple-system, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem;
+  }
+  .box {
+    background: #fff;
+    border: 1px solid #E4E1D6;
+    border-radius: 10px;
+    padding: 1.6rem;
+    max-width: 460px;
+    text-align: center;
+  }
+  h1 {
+    font-family: 'Oswald', sans-serif;
+    font-size: 1.2rem;
+    margin: 0.6rem 0 0.5rem;
+    color: #0B3D2E;
+  }
+  p { font-size: 0.9rem; color: #5C6B62; line-height: 1.5; margin: 0.4rem 0; }
+  .spinner {
+    width: 34px; height: 34px;
+    margin: 0 auto;
+    border: 4px solid #E4E1D6;
+    border-top-color: #0B3D2E;
+    border-radius: 50%;
+    animation: spin 0.9s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .err {
+    margin-top: 0.9rem;
+    background: #FBEDE8;
+    color: #B4472B;
+    border-radius: 6px;
+    padding: 0.6rem;
+    font-size: 0.82rem;
+    text-align: left;
+    word-break: break-word;
+  }
+</style>
+</head>
+<body>
+  <div class="box">
+    <div class="spinner"></div>
+    <h1>Tahminler hazırlanıyor…</h1>
+    <p>
+      12 lig taranıyor ve ~200 maç için tahmin hesaplanıyor. Ücretsiz API
+      dakikada 10 istekle sınırlı olduğundan bu ilk seferde 2-3 dakika
+      sürebilir. Bu sayfa kendini otomatik yeniliyor, bekleyebilirsin.
+    </p>
+    {% if error %}
+    <div class="err">Son deneme başarısız oldu: {{ error }}</div>
+    {% endif %}
+  </div>
+</body>
+</html>
