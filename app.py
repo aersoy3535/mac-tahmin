@@ -16,7 +16,10 @@ app = Flask(__name__)
 
 @app.route("/")
 def index():
-    data = cache.get_or_refresh()
+    try:
+        data = cache.get_or_refresh()
+    except Exception as e:
+        return render_template("error.html", message=str(e)), 500
     age_minutes = int((time.time() - data["generated_at"]) / 60)
     total_matches = sum(len(v) for v in data["leagues"].values())
     return render_template(
@@ -29,7 +32,10 @@ def index():
 
 @app.route("/yenile", methods=["POST"])
 def refresh_now():
-    cache.get_or_refresh(force=True)
+    try:
+        cache.get_or_refresh(force=True)
+    except Exception as e:
+        return render_template("error.html", message=str(e)), 500
     return redirect(url_for("index"))
 
 

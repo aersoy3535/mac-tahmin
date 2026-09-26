@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bir sorun oluştu</title>
+<style>
+  body {
+    margin: 0;
+    background: #F7F6F1;
+    color: #14231C;
+    font-family: -apple-system, sans-serif;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 1.5rem;
+  }
+  .box {
+    background: #fff;
+    border: 1px solid #E4E1D6;
+    border-radius: 10px;
+    padding: 1.5rem;
+    max-width: 480px;
+  }
+  h1 { font-size: 1.15rem; margin-top: 0; color: #B4472B; }
+  code {
+    display: block;
+    background: #F7F6F1;
+    padding: 0.6rem;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    margin-top: 0.7rem;
+    word-break: break-word;
+  }
+  a { color: #145C43; }
+</style>
+</head>
+<body>
+  <div class="box">
+    <h1>Bir sorun oluştu</h1>
+    <p>Tahminler yüklenirken bir hata oluştu:</p>
+    <code>{{ message }}</code>
+    <p style="margin-top:1rem; font-size:0.85rem; color:#5C6B62;">
+      Bu genellikle <code>FOOTBALL_DATA_API_KEY</code> ortam değişkeninin
+      eksik/yanlış olmasından ya da API'nin geçici olarak yanıt vermemesinden
+      kaynaklanır. Sayfayı birazdan tekrar dene.
+    </p>
+  </div>
+</body>
+</html>
